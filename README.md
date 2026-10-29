@@ -20,7 +20,7 @@ Requires Node.js 20.9+.
 
 | Variable | Purpose |
 | --- | --- |
-| `NEXT_PUBLIC_SITE_URL` | Canonical URL used for metadata, Open Graph, JSON-LD, `robots.txt` and `sitemap.xml`. **Set this when you deploy**, e.g. `https://ravigauswami.dev`. |
+| `NEXT_PUBLIC_SITE_URL` | Canonical URL used for metadata, Open Graph, JSON-LD, `robots.txt` and `sitemap.xml`. Defaults to `https://ravijg.github.io`; set it if you move to a custom domain. |
 | `NEXT_PUBLIC_FORM_ENDPOINT` | A JSON form endpoint (e.g. [Formspree](https://formspree.io)). If set, the contact form POSTs `{ name, email, message }` to it. If unset, the form opens the visitor's mail client with the message pre-filled. |
 
 Put them in `.env.local` for local development.
@@ -94,4 +94,8 @@ src/
 
 ## Deploying
 
-The site is fully static, so it works on Vercel with zero config. Remember to set `NEXT_PUBLIC_SITE_URL`.
+The site is a static export (`output: "export"` in `next.config.ts`). `npm run build` writes plain HTML, CSS and JS to `out/`.
+
+**GitHub Pages (live at https://ravijg.github.io):** `.github/workflows/deploy.yml` builds and publishes the site on every push to `main`. One-time setup in the repo: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+
+To preview the exported site locally, run `npx serve out`.

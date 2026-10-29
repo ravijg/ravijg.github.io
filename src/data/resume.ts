@@ -17,7 +17,7 @@ export const profile = {
   linkedin: "https://www.linkedin.com/in/ravi-gauswami-26681a195",
   resumeUrl: "/Ravi_Gauswami_AI_Engineer_Resume.pdf",
   yearsOfExperience: "3+",
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "https://ravijg.github.io",
   /** Short summary used in metadata and schema markup. */
   summary:
     "AI/ML Engineer with 3+ years of experience building machine learning, NLP and computer vision systems with Python, FastAPI, Flask and Django. Specialised in LLM applications, RAG pipelines, visual search and enterprise automation.",
