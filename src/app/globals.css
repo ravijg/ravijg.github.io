@@ -1,1 +1,271 @@
 @import "tailwindcss";
+
+/* ---------- Design tokens ---------- */
+:root {
+  --bg: #05060a;
+  --bg-elevated: #0b0d14;
+  --surface: rgba(255, 255, 255, 0.035);
+  --surface-strong: rgba(255, 255, 255, 0.06);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --fg: #eef0f6;
+  --fg-muted: #a1a8b8;
+  --fg-subtle: #7b8396; /* ≥ 4.5:1 on --bg for small text */
+
+  /* Brand: "signal" — cyan → violet → magenta */
+  --signal-1: #7cf7ff;
+  --signal-2: #8b7bff;
+  --signal-3: #ff7ad9;
+  --ok: #4ade80;
+  --warn: #fbbf24;
+  --danger: #fb7185;
+
+  /* Cursor position, written by <CursorGlow /> */
+  --mx: 50vw;
+  --my: 30vh;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-surface: var(--surface);
+  --color-surface-strong: var(--surface-strong);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+  --color-signal-1: var(--signal-1);
+  --color-signal-2: var(--signal-2);
+  --color-signal-3: var(--signal-3);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
+
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-spin-slow: spin 18s linear infinite;
+  --animate-pulse-soft: pulse-soft 3s ease-in-out infinite;
+  --animate-caret: caret 1s steps(1) infinite;
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes pulse-soft {
+    0%,
+    100% {
+      opacity: 0.55;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+  @keyframes caret {
+    50% {
+      opacity: 0;
+    }
+  }
+}
+
+/* ---------- Base ---------- */
+html {
+  overflow-x: clip;
+  color-scheme: dark;
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--signal-2) 45%, transparent);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--signal-1);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ---------- Utilities ---------- */
+@utility text-gradient {
+  background-image: linear-gradient(
+    100deg,
+    var(--signal-1) 0%,
+    var(--signal-2) 50%,
+    var(--signal-3) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility glass {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--border);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+
+@utility grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+@utility noise {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+/* Gradient hairline border for premium cards */
+@utility ring-gradient {
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(
+      140deg,
+      color-mix(in oklab, var(--signal-1) 60%, transparent),
+      transparent 35%,
+      transparent 65%,
+      color-mix(in oklab, var(--signal-3) 50%, transparent)
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+/* Mouse-reactive spotlight; position comes from the --mx/--my vars */
+.spotlight {
+  background: radial-gradient(
+    600px circle at var(--mx) var(--my),
+    color-mix(in oklab, var(--signal-2) 14%, transparent),
+    transparent 60%
+  );
+}
+
+/* Local hover spotlight on cards (vars set per card) */
+.card-spot {
+  --cx: 50%;
+  --cy: 50%;
+}
+.card-spot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  background: radial-gradient(
+    380px circle at var(--cx) var(--cy),
+    color-mix(in oklab, var(--signal-1) 12%, transparent),
+    transparent 65%
+  );
+}
+.card-spot:hover::after {
+  opacity: 1;
+}
+
+/* Thin custom scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Hero intro — pure CSS, opacity + transform only so it runs on the compositor
+   even while the main thread is busy (a blur here delays LCP on phones). */
+/* Starts at 0.15, not 0: browsers skip fully transparent text when timing the
+   Largest Contentful Paint, so a fade from 0 would report the headline late. */
+@keyframes rise {
+  from {
+    opacity: 0.15;
+    transform: translateY(24px);
+  }
+}
+.rise {
+  animation: rise 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--d, 0s);
+}
+
+/* Custom cursor (fine pointers only — see <Cursor />). Text fields keep the I-beam. */
+html.has-cursor,
+html.has-cursor a,
+html.has-cursor button,
+html.has-cursor [role="tab"],
+html.has-cursor [role="radio"],
+html.has-cursor canvas {
+  cursor: none;
+}
+html.has-cursor input,
+html.has-cursor textarea {
+  cursor: text;
+}
+html.cursor-hidden [class*="mix-blend-difference"][aria-hidden] {
+  opacity: 0 !important;
+}
+
+/* Lenis smooth scroll */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+.lenis [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+/* Masked heading reveal container: room for descenders + italics */
+.mask-line {
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+  padding-right: 0.1em;
+}
