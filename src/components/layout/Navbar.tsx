@@ -46,6 +46,21 @@ export function Navbar() {
   }, [open]);
 
   return (
+    <>
+    {/* Dims the page behind the mobile menu; lives outside the transformed header so `fixed` covers the viewport. */}
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          aria-hidden
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
+          onClick={() => setOpen(false)}
+          className="fixed inset-0 z-40 bg-bg/85 md:hidden"
+        />
+      )}
+    </AnimatePresence>
     <motion.header
       animate={{ y: hidden ? -96 : 0 }}
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
@@ -55,7 +70,7 @@ export function Navbar() {
         aria-label="Primary"
         className={cn(
           "mx-auto flex h-14 max-w-6xl items-center justify-between rounded-full pr-2 pl-5 transition-all duration-500",
-          scrolled ? "border border-line bg-bg/75 backdrop-blur-xl backdrop-saturate-150 shadow-[0_10px_40px_-20px_rgba(0,0,0,.8)]" : "border border-transparent",
+          scrolled || open ? "border border-line bg-bg/75 backdrop-blur-xl backdrop-saturate-150 shadow-[0_10px_40px_-20px_rgba(0,0,0,.8)]" : "border border-transparent",
         )}
       >
         <a href="#top" className="group flex items-center gap-2.5" aria-label={`${profile.name} — home`}>
@@ -121,7 +136,9 @@ export function Navbar() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -12, scale: 0.98 }}
             transition={{ duration: 0.25 }}
-            className="glass mx-auto mt-2 max-w-6xl overflow-hidden rounded-3xl p-3 md:hidden"
+            // Opaque on purpose: mobile browsers often skip backdrop-filter inside a transformed parent,
+            // which left the glass panel see-through over the hero.
+            className="mx-auto mt-2 max-w-6xl overflow-hidden rounded-3xl border border-line bg-bg-elevated p-3 shadow-[0_20px_60px_-20px_rgba(0,0,0,.9)] md:hidden"
           >
             <ul className="flex flex-col">
               {navLinks.map((l, i) => (
@@ -155,5 +172,6 @@ export function Navbar() {
         )}
       </AnimatePresence>
     </motion.header>
+    </>
   );
 }
